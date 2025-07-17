@@ -29,14 +29,21 @@ if uploaded_file is not None:
         st.success("✅ OCR terminé ! Voici le texte extrait :")
         st.text_area("Texte OCR", texte, height=300)
 
-        # Générer un PDF consultable à partir du texte
         if st.button("Générer PDF consultable"):
             pdf = FPDF()
             pdf.add_page()
             pdf.set_font("Arial", size=12)
             for line in texte.split("\n"):
                 pdf.cell(200, 10, txt=line, ln=True)
+
             pdf_output = io.BytesIO()
-            pdf.output(pdf_output)
+            pdf_bytes = pdf.output(dest='S').encode('latin1')
+            pdf_output.write(pdf_bytes)
             pdf_output.seek(0)
-            st.download_button("📥 Télécharger le PDF consultable", data=pdf_output, file_name="ocr_result.pdf", mime="application/pdf")
+
+            st.download_button(
+                "📥 Télécharger le PDF consultable",
+                data=pdf_output,
+                file_name="ocr_result.pdf",
+                mime="application/pdf"
+            )
